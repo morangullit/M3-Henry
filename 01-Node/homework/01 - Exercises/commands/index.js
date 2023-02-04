@@ -2,20 +2,74 @@ const fs = require("fs");
 const utils = require("../utils/request");
 const process = require("process");
 
-function pwd() {}
+function pwd(print) {
+    print(process.cwd());
+}
 
-function date() {}
+function date(print) {
+    print(new Date().toString());
+}
 
-function echo() {}
+function echo(print, args) {
+    print(args);
+}
 
-function ls() {}
+function ls(print) {
+    /* fs.readdir("./", (error, files) => {
+        if (error) {
+            throw error;
+        }
+        print(files.toString().replace(","," "));
+    }); */
+    /* fs.readdir('./',(err,files)=>{
+        const text= files.join(' ')
+        if(err) throw err
+        print(text)
+        }); */
 
-function cat() {}
+    fs.readdir(".", function(error,files) {
+        if (error) throw new Error (error)
+        print (files.join(" "))
+    })
+}
 
-function head() {}
+function cat(print, args) {
+    fs.readFile(args, 'utf-8', (error, data) => {
+        if (error) throw error;
+        print(data);
+      });
+}
 
-function tail() {}
+function head(print, args) {
+    fs.readFile(args,'utf-8',(error,data) =>{
+        if (error) throw new Error (error);
+        const lines = data.split("\n")
+        print(lines[0].trim())
+    });
+}
 
-function curl() {}
+function tail(print, args) {
+    fs.readFile(args, 'utf-8', (error, data) => {
+        if (error) throw new error;
+        const lines = data.split('\n');
+        print(lines[lines.length - 1].trim());
+        });
+}
 
-module.exports = {};
+function curl(print, args) {
+    utils.request(args,(error,response)=>{
+        if (error)  throw new Error (error);
+        print (response.data)
+    });
+}
+
+module.exports = {
+    pwd,
+    date,
+    echo,
+    ls,
+    cat,
+    head,
+    tail,
+    curl
+};
